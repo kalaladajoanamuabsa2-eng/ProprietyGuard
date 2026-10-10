@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-md mx-auto bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-6">
+    <div class="text-center space-y-1">
+        <h1 class="text-xl font-bold text-white">Entrar no ProprietyGuard</h1>
+        <p class="text-xs text-slate-400">Acede ao teu painel de contratos</p>
+    </div>
+
+    <form method="POST" class="space-y-4">
+        <div>
+            <label class="block text-xs text-slate-400 mb-1">E-mail</label>
+            <input type="email" name="email" required class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm text-white focus:border-emerald-500 outline-none">
+        </div>
+        <div>
+            <div class="flex justify-between items-center mb-1">
+                <label class="text-xs text-slate-400">Senha</label>
+                <a href="{{ url_for('esqueci_senha') }}" class="text-xs text-emerald-400 hover:underline">Esqueci a senha?</a>
+            </div>
+            <input type="password" name="senha" required class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm text-white focus:border-emerald-500 outline-none">
+        </div>
+        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-3 rounded-xl transition text-sm shadow-md">
+            Entrar
+        </button>
+    </form>
+
+    <p class="text-center text-xs text-slate-400">
+        Não tens conta? <a href="{{ url_for('register') }}" class="text-emerald-400 hover:underline font-medium">Regista-te aqui</a>
+    </p>
+</div>
+
+<div class="flex justify-center space-x-6 text-xs text-slate-400 mt-8">
+    <a href="{{ url_for('terms') }}" class="hover:text-white transition">Termos de Serviço</a>
+    <a href="{{ url_for('privacy') }}" class="hover:text-white transition">Política de Privacidade</a>
+</div>
+
+{% endblock %}

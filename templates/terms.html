@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-2xl mx-auto bg-slate-800 border border-slate-700 rounded-xl p-8 shadow-xl space-y-6 text-slate-300 text-sm">
+    <h1 class="text-2xl font-bold text-white mb-2">Termos de Serviço — ProprietyGuard</h1>
+    <p class="text-xs text-slate-400">Última atualização: Outubro de 2026</p>
+
+    <section class="space-y-2">
+        <h2 class="text-base font-semibold text-white">1. Natureza do Serviço</h2>
+<p>O ProprietyGuard é uma ferramenta de software baseada em Inteligência Artificial para análise e monitorização de prazos de contratos de arrendamento. Os dados extraídos e as traduções automáticas devem ser sempre revisados pelo utilizador humano.</p>
+    </section>
+
+    <section class="space-y-2">
+        <h2 class="text-base font-semibold text-white">2. Isenção de Responsabilidade Legal</h2>
+        <p>O ProprietyGuard <strong>não substitui aconselhamento jurídico profissional</strong>. Não nos responsabilizamos por falhas de envio de e-mails devidas a bloqueios de servidores externos (como o Resend) ou por prazos perdidos decorrentes de informações incorretas inseridas nos contratos.</p>
+    </section>
+
+    <section class="space-y-2">
+        <h2 class="text-base font-semibold text-white">3. Contas e Assinaturas</h2>
+        <p>O acesso ao sistema requer o pagamento pontual da subscrição aplicável. Contas inativas ou com pagamentos pendentes poderão ser suspensas pelo administrador.</p>
+    </section>
+
+    <div class="pt-4 border-t border-slate-700">
+        <a href="{{ url_for('index') }}" class="text-emerald-400 hover:underline text-xs">← Voltar ao Início</a>
+    </div>
+</div>
+
+<div class="flex justify-center space-x-6 text-xs text-slate-400 mt-8">
+    <a href="{{ url_for('terms') }}" class="hover:text-white transition">Termos de Serviço</a>
+    <a href="{{ url_for('privacy') }}" class="hover:text-white transition">Política de Privacidade</a>
+</div>
+
+{% endblock %}

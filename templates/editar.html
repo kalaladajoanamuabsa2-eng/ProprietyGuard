@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-xl mx-auto bg-slate-800 border border-slate-700 rounded-xl p-6 shadow-xl space-y-6">
+    <div>
+        <h1 class="text-xl font-bold text-white">Editar Contrato</h1>
+        <p class="text-xs text-slate-400 mt-1">Atualize as informações do contrato registado.</p>
+    </div>
+
+    <form method="POST" class="space-y-4">
+        <div>
+            <label class="block text-xs text-slate-400 mb-1">Nome do Inquilino</label>
+            <input type="text" name="tenant_name" value="{{ contrato.tenant_name }}" required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white focus:border-emerald-500 outline-none">
+        </div>
+        <div>
+            <label class="block text-xs text-slate-400 mb-1">Telefone de Contato</label>
+            <input type="text" name="tenant_phone" value="{{ contrato.tenant_phone }}" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white focus:border-emerald-500 outline-none">
+        </div>
+        <div>
+            <label class="block text-xs text-slate-400 mb-1">Valor do Aluguel</label>
+            <input type="text" name="rent_amount" value="{{ contrato.rent_amount }}" required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white focus:border-emerald-500 outline-none">
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label class="block text-xs text-slate-400 mb-1">Data de Início</label>
+                <input type="text" name="start_date" value="{{ contrato.start_date }}" required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white focus:border-emerald-500 outline-none">
+            </div>
+            <div>
+                <label class="block text-xs text-slate-400 mb-1">Data de Término</label>
+                <input type="text" name="end_date" value="{{ contrato.end_date }}" required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white focus:border-emerald-500 outline-none">
+            </div>
+        </div>
+        <div>
+            <label class="block text-xs text-slate-400 mb-1">Índice / Regra de Reajuste</label>
+            <input type="text" name="adjustment_index" value="{{ contrato.adjustment_index }}" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white focus:border-emerald-500 outline-none">
+        </div>
+        <div>
+            <label class="block text-xs text-slate-400 mb-1">Idioma de Alerta</label>
+            <input type="text" name="alert_language" list="idiomas_globais" value="{{ contrato.alert_language }}" placeholder="Ex: Swahili, Japanese, Arabic..." class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white focus:border-emerald-500 outline-none">
+            
+            <datalist id="idiomas_globais">
+                <option value="Portuguese">Português</option>
+                <option value="English">English (Inglês)</option>
+                <option value="Spanish">Español (Espanhol)</option>
+                <option value="French">Français (Francês)</option>
+                <option value="German">Deutsch (Alemão)</option>
+                <option value="Italian">Italiano</option>
+                <option value="Russian">Русский (Russo)</option>
+                <option value="Mandarin">中文 (Mandarim)</option>
+                <option value="Japanese">日本語 (Japonês)</option>
+                <option value="Korean">한국어 (Coreano)</option>
+                <option value="Hindi">हिन्दी (Hindi)</option>
+                <option value="Vietnamese">Tiếng Việt (Vietnamita)</option>
+                <option value="Indonesian">Bahasa Indonesia</option>
+                <option value="Arabic">العربية (Árabe)</option>
+                <option value="Persian">فارسی (Persa)</option>
+                <option value="Turkish">Türkçe (Turco)</option>
+                <option value="Swahili">Kiswahili (Suaíli)</option>
+                <option value="Amharic">አማርኛ (Amárico)</option>
+            </datalist>
+        </div>
+
+        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-3 rounded-lg transition text-sm shadow-md">
+            Atualizar Contrato 💾
+        </button>
+    </form>
+</div>
+
+<div class="flex justify-center space-x-6 text-xs text-slate-400 mt-8">
+    <a href="{{ url_for('terms') }}" class="hover:text-white transition">Termos de Serviço</a>
+    <a href="{{ url_for('privacy') }}" class="hover:text-white transition">Política de Privacidade</a>
+</div>
+
+{% endblock %}

@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="space-y-6">
+    <div class="flex justify-between items-center">
+        <div>
+            <h1 class="text-2xl font-bold text-white">Seus Contratos Ativos</h1>
+            <p class="text-xs text-slate-400">Monitorização inteligente de prazos e inquilinos</p>
+        </div>
+        <a href="{{ url_for('novo_contrato') }}" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition shadow-md">
+            + Carregar Contrato
+        </a>
+    </div>
+
+    {% if alertas_count > 0 %}
+        <div class="bg-amber-950/50 border border-amber-600/60 rounded-xl p-4 flex items-center space-x-3 text-amber-200 text-sm">
+            <span class="text-xl">⚠️</span>
+            <div>
+                <strong>Atenção:</strong> Tens {{ alertas_count }} contrato(s) prestes a expirar nos próximos 30 dias!
+            </div>
+        </div>
+    {% endif %}
+
+    {% if not contratos %}
+        <div class="bg-slate-800 border border-slate-700 rounded-xl p-10 text-center space-y-3">
+            <p class="text-slate-400 text-sm">Ainda não tens contratos registados.</p>
+            <a href="{{ url_for('novo_contrato') }}" class="inline-block text-emerald-400 hover:underline font-medium text-sm">
+                Carregar o primeiro contrato em PDF &rarr;
+            </a>
+        </div>
+    {% else %}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {% for c in contratos %}
+                <div class="bg-slate-800 border border-slate-700 rounded-xl p-5 shadow-lg space-y-3 flex flex-col justify-between">
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-semibold text-emerald-400 text-base">📄 {{ c.tenant_name }}</h3>
+                            <span class="text-xs bg-emerald-900/60 text-emerald-300 px-2 py-0.5 rounded border border-emerald-700">{{ c.rent_amount }}</span>
+                        </div>
+                        <div class="text-xs text-slate-300 space-y-1">
+                            <p><strong>Ficheiro:</strong> {{ c.nome_arquivo }}</p>
+                            <p><strong>Contacto:</strong> {{ c.tenant_phone }}</p>
+                            <p><strong>Vigência:</strong> {{ c.start_date }} até <span class="text-amber-400 font-semibold">{{ c.end_date }}</span></p>
+                            <p><strong>Reajuste:</strong> {{ c.adjustment_index }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between items-center pt-3 border-t border-slate-700 text-xs">
+                        <a href="{{ url_for('editar_contrato', id=c.id) }}" class="text-emerald-400 hover:underline font-medium">
+                            ✏️ Modificar
+                        </a>
+                        <form action="{{ url_for('deletar_contrato', id=c.id) }}" method="POST" onsubmit="return confirm('Deseja mesmo remover este contrato?');">
+                            <button type="submit" class="text-red-400 hover:text-red-300 font-medium px-2 py-1 bg-red-950/40 border border-red-900/50 rounded transition">
+                                Excluir
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+
+<div class="flex justify-center space-x-6 text-xs text-slate-400 mt-8">
+    <a href="{{ url_for('terms') }}" class="hover:text-white transition">Termos de Serviço</a>
+    <a href="{{ url_for('privacy') }}" class="hover:text-white transition">Política de Privacidade</a>
+</div>
+
+{% endblock %}

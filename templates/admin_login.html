@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - ProprietyGuard</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex items-center justify-center p-4">
+    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 max-w-sm w-full space-y-6 shadow-2xl">
+        <div class="text-center space-y-2">
+            <div class="text-3xl">🛡️</div>
+            <h1 class="font-bold text-white text-base">Painel Master Admin</h1>
+            <p class="text-xs text-slate-400">Insira a chave de acesso de administrador.</p>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="space-y-2">
+                    {% for category, message in messages %}
+                        <div class="p-2.5 rounded-xl border text-xs bg-red-950/60 border-red-700 text-red-200 text-center">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST" class="space-y-4">
+            <div>
+                <label class="block text-xs font-medium text-slate-300 mb-1">Senha de Admin</label>
+                <input type="password" name="admin_senha" required placeholder="Coloque a Senha Aqui" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-emerald-500">
+            </div>
+            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2.5 rounded-xl transition text-xs shadow-lg">
+                Entrar no Painel
+            </button>
+        </form>
+
+        <div class="text-center">
+            <a href="{{ url_for('index') }}" class="text-xs text-slate-400 hover:text-white transition">&larr; Voltar ao site</a>
+        </div>
+    </div>
+</body>
+</html>

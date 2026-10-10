@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="space-y-6">
+    <div class="flex justify-between items-center">
+        <div>
+            <h1 class="text-xl font-bold text-white">Painel de Administração</h1>
+            <p class="text-xs text-slate-400">Gestão global de utilizadores e métricas do sistema.</p>
+        </div>
+        <div class="bg-emerald-950/60 border border-emerald-700 px-3 py-1.5 rounded-xl text-xs text-emerald-300">
+            Total Contratos: <strong>{{ total_contratos }}</strong>
+        </div>
+    </div>
+
+    <!-- Lista de Utilizadores -->
+    <div class="bg-slate-800/60 border border-slate-700/80 rounded-2xl overflow-hidden shadow-lg">
+        <div class="p-4 border-b border-slate-700 font-bold text-xs text-slate-300 uppercase tracking-wider">
+            Utilizadores Registados
+        </div>
+        <div class="divide-y divide-slate-700/60">
+            {% for u in usuarios %}
+                <div class="p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 text-xs">
+                    <div>
+                        <div class="font-semibold text-white text-sm">{{ u.email }}</div>
+                        <div class="text-slate-400">Contratos: {{ u.contratos|length }} | Alerta E-mail: {{ u.alert_email or 'Padrão' }}</div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        {% if u.is_active_account %}
+                            <span class="bg-emerald-950/60 border border-emerald-800 text-emerald-300 px-2.5 py-1 rounded-full">Ativo</span>
+                        {% else %}
+                            <span class="bg-red-950/60 border border-red-800 text-red-300 px-2.5 py-1 rounded-full">Suspenso</span>
+                        {% endif %}
+
+                        {% if u.email != 'teu_email@gmail.com' %}
+                            <!-- Botão que dispara o modal de dupla confirmação -->
+                            <button onclick="abrirModal({{ u.id }}, '{{ u.email }}', {{ 'true' if u.is_active_account else 'false' }})" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-3 py-1.5 rounded-xl transition">
+                                {{ 'Suspender' if u.is_active_account else 'Ativar' }}
+                            </button>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Dupla Confirmação com Botões Invertidos -->
+<div id="modalConfirmacao" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+    <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl text-center">
+        <div id="modalIcone" class="text-3xl">⚠️</div>
+        <h3 id="modalTitulo" class="font-bold text-white text-base">Tem a certeza absoluta?</h3>
+        <p id="modalTexto" class="text-xs text-slate-400 leading-relaxed"></p>
+
+        <!-- Área dos Botões (Dinâmica com Posições Invertidas) -->
+        <div id="modalBotoes" class="flex gap-3 pt-2">
+            <!-- JavaScript preencherá isto para inverter a ordem dependendo da etapa -->
+        </div>
+    </div>
+</div>
+
+<script>
+let passoAtual = 1;
+let userIdGlobal = null;
+let acaoGlobal = null;
+let emailGlobal = '';
+
+function abrirModal(userId, email, ativo) {
+    userIdGlobal = userId;
+    emailGlobal = email;
+    acaoGlobal = ativo ? 'suspender' : 'ativar';
+    passoAtual = 1;
+    mostrarPasso1();
+    document.getElementById('modalConfirmacao').classList.remove('hidden');
+}
+
+function fecharModal() {
+    document.getElementById('modalConfirmacao').classList.add('hidden');
+}
+
+function mostrarPasso1() {
+    passoAtual = 1;
+    document.getElementById('modalTitulo').innerText = `Pretende ${acaoGlobal} o utilizador?`;
+    document.getElementById('modalTexto').innerText = `Vai alterar o acesso à conta de ${emailGlobal}. Tem certeza desta ação?`;
+    
+    // Na 1ª pergunta: SIM fica à ESQUERDA, NÃO fica à DIREITA
+    document.getElementById('modalBotoes').innerHTML = `
+        <button onclick="avancarPasso2()" class="flex-1 bg-red-600 hover:bg-red-500 text-white font-semibold py-2.5 rounded-xl transition text-xs">Sim, continuar</button>
+        <button onclick="fecharModal()" class="flex-1 bg-slate-700 hover:bg-slate-600 text-slate-200 py-2.5 rounded-xl transition text-xs">Cancelar</button>
+    `;
+}
+
+function avancarPasso2() {
+    passoAtual = 2;
+    document.getElementById('modalTitulo').innerText = `⚠️ Confirmação Absoluta`;
+    document.getElementById('modalTexto').innerText = `Esta é a última confirmação. Deseja mesmo prosseguir com a suspensão/ativação de ${emailGlobal}?`;
+    
+    // Na 2ª pergunta: BOTÕES INVERTIDOS (NÃO/Cancelar à ESQUERDA, SIM à DIREITA) para evitar cliques por hábito!
+    document.getElementById('modalBotoes').innerHTML = `
+        <button onclick="fecharModal()" class="flex-1 bg-slate-700 hover:bg-slate-600 text-slate-200 py-2.5 rounded-xl transition text-xs">Cancelar</button>
+        <form action="/admin/toggle/${userIdGlobal}" method="POST" class="flex-1">
+            <button type="submit" class="w-full bg-red-600 hover:bg-red-500 text-white font-semibold py-2.5 rounded-xl transition text-xs">Sim, tenho certeza absoluta</button>
+        </form>
+    `;
+}
+</script>
+
+<div class="flex justify-center space-x-6 text-xs text-slate-400 mt-8">
+    <a href="{{ url_for('terms') }}" class="hover:text-white transition">Termos de Serviço</a>
+    <a href="{{ url_for('privacy') }}" class="hover:text-white transition">Política de Privacidade</a>
+</div>
+
+{% endblock %}
