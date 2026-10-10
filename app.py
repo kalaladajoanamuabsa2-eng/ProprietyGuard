@@ -5,7 +5,7 @@ import zipfile
 import xml.etree.ElementTree as ET
 import base64
 from datetime import datetime, date, timedelta
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 import requests
@@ -24,14 +24,13 @@ if database_url:
         database_url = database_url.replace("postgresql://", "postgresql+psycopg2://", 1)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = database_url or 'sqlite:///proprietyguard.db'
-
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
-GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
-RESEND_API_KEY = os.environ.get("RESEND_API_KEY", "")
-ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "admin1234")
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
+RESEND_API_KEY = os.environ.get("RESEND_API_KEY")
+ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD")
 
 # --- MODELOS DA BASE DE DADOS ---
 class User(db.Model):
@@ -448,15 +447,26 @@ def terms():
 def privacy():
     return render_template('privacy.html')
 
+# --- ROTA CORRIGIDA PARA O CRON-JOB ---
 @app.route('/api/verificar-prazos-automatico')
 def verificar_prazos_automatico():
     hoje = date.today()
-    contratos = Contract.query.all()
+    
+    try:
+        contratos = Contract.query.all()
+    except Exception as e:
+        print("Erro ao procurar contratos:", e)
+        return jsonify({"status": "error", "message": "Erro de conexao com DB"}), 500
+
     enviados = 0
+    erros = 0
     
     for c in contratos:
+        if not c.end_date:
+            continue
+            
         try:
-            data_fim = datetime.strptime(c.end_date, "%Y-%m-%d").date()
+            data_fim = datetime.strptime(str(c.end_date).strip(), "%Y-%m-%d").date()
             dias_restantes = (data_fim - hoje).days
             
             marco_atual = None
@@ -482,13 +492,21 @@ def verificar_prazos_automatico():
                             enviados_lista.append(marco_atual)
                             c.alertas_enviados = ",".join(enviados_lista)
                             enviados += 1
-        except ValueError:
-            pass
+        except Exception as err:
+            print(f"Erro ao processar contrato ID {c.id}: {err}")
+            erros += 1
+            continue
             
-    db.session.commit()
-    return f"Verificação concluída. {enviados} alertas enviados."
+    try:
+        db.session.commit()
+    except Exception as err:
+        print("Erro ao salvar alteracoes no DB:", err)
+        
+    return jsonify({
+        "status": "ok",
+        "enviados": enviados,
+        "erros_ignorados": erros
+    }), 200
 
 if __name__ == '__main__':
-    app.app_context().push()
-    db.create_all()
     app.run(host='0.0.0.0', port=5000, debug=True)
