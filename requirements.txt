@@ -4,3 +4,4 @@ Werkzeug
 requests
 pypdf
 gunicorn
+psycopg2-binary
