@@ -15,14 +15,19 @@ app = Flask(__name__)
 app.secret_key = "proprietyguard_global_secret_secure_key"
 app.permanent_session_lifetime = timedelta(days=7)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///proprietyguard.db'
+# --- CONFIGURAÇÃO DA BASE DE DADOS (POSTGRESQL / SQLALCHEMY) ---
+database_url = os.environ.get("DATABASE_URL")
+if database_url and database_url.startswith("postgres://"):
+    database_url = database_url.replace("postgres://", "postgresql://", 1)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = database_url or 'sqlite:///proprietyguard.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
-GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
-RESEND_API_KEY = os.environ.get("RESEND_API_KEY")
-ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD")
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
+RESEND_API_KEY = os.environ.get("RESEND_API_KEY", "")
+ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "admin1234")
 
 # --- MODELOS DA BASE DE DADOS ---
 class User(db.Model):
@@ -480,4 +485,6 @@ def verificar_prazos_automatico():
     return f"Verificação concluída. {enviados} alertas enviados."
 
 if __name__ == '__main__':
+    app.app_context().push()
+    db.create_all()
     app.run(host='0.0.0.0', port=5000, debug=True)
