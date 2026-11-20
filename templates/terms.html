@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-2xl mx-auto bg-slate-800 border border-slate-700 rounded-xl p-8 shadow-xl space-y-6 text-slate-300 text-sm">
+    <h1 class="text-2xl font-bold text-white mb-2">Terms of Service — ProprietyGuard</h1>
+    <p class="text-xs text-slate-400">Last updated: October 2026</p>
+
+    <section class="space-y-2">
+        <h2 class="text-base font-semibold text-white">1. Nature of the Service</h2>
+        <p>ProprietyGuard is an AI-powered software tool for analyzing and tracking lease agreement deadlines. Extracted data and automated translations should always be reviewed by a human user.</p>
+    </section>
+
+    <section class="space-y-2">
+        <h2 class="text-base font-semibold text-white">2. Legal Disclaimer</h2>
+        <p>ProprietyGuard <strong>does not replace professional legal advice</strong>. We are not liable for email delivery failures caused by external server blocks (such as Resend) or missed deadlines resulting from inaccurate information entered in leases.</p>
+    </section>
+
+    <section class="space-y-2">
+        <h2 class="text-base font-semibold text-white">3. Accounts and Subscriptions</h2>
+        <p>Access to the system requires timely payment of the applicable subscription. Inactive accounts or accounts with overdue payments may be suspended by the administrator.</p>
+    </section>
+
+    <div class="pt-4 border-t border-slate-700">
+        <a href="{{ url_for('index') }}" class="text-emerald-400 hover:underline text-xs">&larr; Back to Home</a>
+    </div>
+</div>
+
+<div class="flex justify-center space-x-6 text-xs text-slate-400 mt-8">
+    <a href="{{ url_for('terms') }}" class="hover:text-white transition">Terms of Service</a>
+    <a href="{{ url_for('privacy') }}" class="hover:text-white transition">Privacy Policy</a>
+</div>
+
+{% endblock %}
