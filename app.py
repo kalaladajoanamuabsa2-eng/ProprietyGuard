@@ -12,10 +12,10 @@ import requests
 from pypdf import PdfReader
 
 app = Flask(__name__)
-app.secret_key = "proprietyguard_global_secret_secure_key"
+app.secret_key = os.environ.get("SECRET_KEY", "proprietyguard_global_secret_secure_key")
 app.permanent_session_lifetime = timedelta(days=7)
 
-# --- CONFIGURAÇÃO DA BASE DE DADOS (POSTGRESQL / SQLALCHEMY) ---
+# --- DATABASE CONFIGURATION (POSTGRESQL / SQLALCHEMY) ---
 database_url = os.environ.get("DATABASE_URL")
 if database_url:
     if database_url.startswith("postgres://"):
@@ -32,7 +32,7 @@ GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
 RESEND_API_KEY = os.environ.get("RESEND_API_KEY")
 ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD")
 
-# --- MODELOS DA BASE DE DADOS ---
+# --- DATABASE MODELS ---
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
@@ -58,7 +58,7 @@ class Contract(db.Model):
 with app.app_context():
     db.create_all()
 
-# --- LEITURA UNIVERSAL DE DOCUMENTOS E IMAGENS ---
+# --- UNIVERSAL DOCUMENT & IMAGE TEXT EXTRACTION ---
 def extrair_texto_universal(file_storage):
     filename = file_storage.filename.lower()
     try:
@@ -185,7 +185,7 @@ def gerar_corpo_email_multilingue(tenant_name, end_date, dias_restantes, idioma_
             return data['candidates'][0]['content']['parts'][0]['text'].strip()
     except Exception:
         pass
-    return f"Hello! The contract for tenant {tenant_name} expires on {end_date} ({dias_restantes} days remaining)."
+    return f"Hello! The lease agreement for tenant {tenant_name} expires on {end_date} ({dias_restantes} days remaining)."
 
 def enviar_email_generico(destinatario, assunto, corpo):
     url = "https://api.resend.com/emails"
@@ -206,7 +206,7 @@ def enviar_email_generico(destinatario, assunto, corpo):
     except Exception:
         return False
 
-# --- ROTAS DE AUTENTICAÇÃO E PERFIL ---
+# --- AUTHENTICATION & PROFILE ROUTES ---
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -214,11 +214,11 @@ def register():
         email = request.form.get('email')
         senha = request.form.get('senha')
         if User.query.filter_by(email=email).first():
-            flash('Este e-mail já está cadastrado.', 'danger')
+            flash('This email address is already registered.', 'danger')
             return redirect(url_for('register'))
         db.session.add(User(email=email, senha_hash=generate_password_hash(senha)))
         db.session.commit()
-        flash('Conta criada com sucesso! Faça o login.', 'success')
+        flash('Account created successfully! Please sign in.', 'success')
         return redirect(url_for('login'))
     return render_template('register.html')
 
@@ -230,21 +230,21 @@ def login():
         usuario = User.query.filter_by(email=email).first()
         if usuario and check_password_hash(usuario.senha_hash, senha):
             if not usuario.is_active_account:
-                flash('A tua conta foi suspensa ou bloqueada pelo administrador.', 'danger')
+                flash('Your account has been suspended or blocked by the administrator.', 'danger')
                 return redirect(url_for('login'))
             session.permanent = True
             session['user_id'] = usuario.id
             session['user_email'] = usuario.email
-            flash('Login efetuado com sucesso!', 'success')
+            flash('Signed in successfully!', 'success')
             return redirect(url_for('index'))
         else:
-            flash('E-mail ou senha incorretos.', 'danger')
+            flash('Invalid email or password.', 'danger')
     return render_template('login.html')
 
 @app.route('/logout')
 def logout():
     session.clear()
-    flash('Sessão encerrada.', 'success')
+    flash('You have been signed out.', 'success')
     return redirect(url_for('login'))
 
 @app.route('/perfil', methods=['GET', 'POST'])
@@ -254,12 +254,12 @@ def perfil():
     usuario = db.session.get(User, session['user_id'])
     if not usuario or not usuario.is_active_account:
         session.clear()
-        flash('A tua conta foi suspensa pelo administrador.', 'danger')
+        flash('Your account has been suspended by the administrator.', 'danger')
         return redirect(url_for('login'))
     if request.method == 'POST':
         usuario.alert_email = request.form.get('alert_email') or None
         db.session.commit()
-        flash('E-mail de alerta atualizado com sucesso!', 'success')
+        flash('Alert email updated successfully!', 'success')
         return redirect(url_for('index'))
     return render_template('perfil.html', usuario=usuario)
 
@@ -273,8 +273,12 @@ def esqueci_senha():
             usuario.reset_token = token
             db.session.commit()
             link = url_for('redefinir_senha', token=token, _external=True)
-            enviar_email_generico(usuario.email, "Recuperação de Senha - ProprietyGuard", f"Clica no link para redefinir a tua senha:\n\n{link}")
-        flash('Se o e-mail estiver registado, enviaremos instruções de recuperação.', 'info')
+            enviar_email_generico(
+                usuario.email,
+                "Password Reset - ProprietyGuard",
+                f"Click the link below to reset your password:\n\n{link}"
+            )
+        flash('If that email is registered, we have sent password recovery instructions.', 'info')
         return redirect(url_for('login'))
     return render_template('esqueci_senha.html')
 
@@ -285,11 +289,11 @@ def redefinir_senha(token):
         usuario.senha_hash = generate_password_hash(request.form.get('senha'))
         usuario.reset_token = None
         db.session.commit()
-        flash('Senha redefinida com sucesso! Podes fazer login.', 'success')
+        flash('Password reset successfully! You can now sign in.', 'success')
         return redirect(url_for('login'))
     return render_template('redefinir_senha.html', token=token)
 
-# --- PAINEL DE ADMINISTRAÇÃO ---
+# --- ADMIN PANEL ---
 @app.route('/admin', methods=['GET', 'POST'])
 def admin_dashboard():
     if request.method == 'POST':
@@ -321,7 +325,7 @@ def admin_toggle_user(user_id):
         flash(f'Estado do utilizador {alvo.email} alterado com sucesso.', 'success')
     return redirect(url_for('admin_dashboard'))
 
-# --- ROTAS PRINCIPAIS E CRUD ---
+# --- CORE ROUTES & CRUD ---
 
 @app.route('/')
 def index():
@@ -330,7 +334,7 @@ def index():
     usuario = db.session.get(User, session['user_id'])
     if not usuario or not usuario.is_active_account:
         session.clear()
-        flash('A tua conta foi suspensa pelo administrador.', 'danger')
+        flash('Your account has been suspended by the administrator.', 'danger')
         return redirect(url_for('login'))
     
     meus_contratos = Contract.query.filter_by(user_id=session['user_id']).all()
@@ -351,17 +355,17 @@ def novo_contrato():
     if request.method == 'POST':
         arquivo = request.files.get('contrato_pdf')
         if not arquivo or arquivo.filename == '':
-            flash('Selecione um arquivo válido.', 'danger')
+            flash('Please select a valid file.', 'danger')
             return redirect(request.url)
         
         conteudo_doc = extrair_texto_universal(arquivo)
         if not conteudo_doc:
-            flash('Não foi possível processar este formato de documento.', 'danger')
+            flash('Unable to process this document format.', 'danger')
             return redirect(request.url)
         
         dados_ia = analisar_contrato_com_gemini(conteudo_doc, arquivo.filename)
         if not dados_ia:
-            flash('Erro ao processar com a IA.', 'danger')
+            flash('Error processing the contract with AI.', 'danger')
             return redirect(request.url)
             
         session['temp_contrato'] = dados_ia
@@ -379,7 +383,7 @@ def revisar_contrato():
         return redirect(url_for('login'))
         
     if request.method == 'POST':
-        idioma_escolhido = request.form.get('alert_language') or session['temp_contrato'].get('detected_language', 'Portuguese')
+        idioma_escolhido = request.form.get('alert_language') or session['temp_contrato'].get('detected_language', 'English')
         
         novo_c = Contract(
             nome_arquivo=session.get('temp_nome_arquivo'),
@@ -396,7 +400,7 @@ def revisar_contrato():
         db.session.commit()
         session.pop('temp_contrato', None)
         session.pop('temp_nome_arquivo', None)
-        flash('Contrato revisado e salvo com sucesso!', 'success')
+        flash('Lease reviewed and saved successfully!', 'success')
         return redirect(url_for('index'))
         
     dados = session.get('temp_contrato')
@@ -421,7 +425,7 @@ def editar_contrato(id):
         contrato.adjustment_index = request.form.get('adjustment_index')
         contrato.alert_language = request.form.get('alert_language') or contrato.alert_language
         db.session.commit()
-        flash('Contrato atualizado com sucesso!', 'success')
+        flash('Lease updated successfully!', 'success')
         return redirect(url_for('index'))
     return render_template('editar.html', contrato=contrato)
 
@@ -436,7 +440,7 @@ def deletar_contrato(id):
     contrato = Contract.query.filter_by(id=id, user_id=session['user_id']).first_or_404()
     db.session.delete(contrato)
     db.session.commit()
-    flash('Contrato removido com sucesso.', 'success')
+    flash('Lease deleted successfully.', 'success')
     return redirect(url_for('index'))
 
 @app.route('/terms')
@@ -447,7 +451,7 @@ def terms():
 def privacy():
     return render_template('privacy.html')
 
-# --- ROTA CORRIGIDA PARA O CRON-JOB ---
+# --- AUTOMATED DEADLINE CHECK ENDPOINT ---
 @app.route('/api/verificar-prazos-automatico')
 def verificar_prazos_automatico():
     hoje = date.today()
@@ -483,7 +487,7 @@ def verificar_prazos_automatico():
                     dono = db.session.get(User, c.user_id)
                     if dono and dono.is_active_account:
                         destino = dono.alert_email if dono.alert_email else dono.email
-                        idioma = c.alert_language if c.alert_language else "Portuguese"
+                        idioma = c.alert_language if c.alert_language else "English"
                         
                         assunto = f"⚠️ Contract Expiration Alert ({dias_restantes} days) - ProprietyGuard"
                         corpo = gerar_corpo_email_multilingue(c.tenant_name, c.end_date, dias_restantes, idioma)
