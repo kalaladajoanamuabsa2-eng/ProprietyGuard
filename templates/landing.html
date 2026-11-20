@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProprietyGuard — Rental Lease Tracking & AI Extraction</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col justify-between selection:bg-emerald-500 selection:text-white">
+    
+    <!-- Navbar -->
+    <header class="max-w-6xl w-full mx-auto px-4 py-4 flex justify-between items-center">
+        <a href="{{ url_for('index') }}" class="font-bold text-sm md:text-base text-emerald-400 tracking-wide flex items-center gap-1">
+            <span>🛡️</span> ProprietyGuard
+        </a>
+        <div class="flex items-center space-x-2 text-xs">
+            <a href="{{ url_for('login') }}" class="text-slate-300 hover:text-white font-medium px-3 py-2 transition">Sign In</a>
+            <a href="{{ url_for('register') }}" class="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-3 py-2 rounded-xl transition shadow-md whitespace-nowrap">Create Account</a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <main class="max-w-5xl w-full mx-auto px-6 py-12 md:py-20 text-center space-y-8 my-auto">
+        <div class="inline-flex items-center gap-2 bg-emerald-950/60 border border-emerald-700/60 text-emerald-300 text-xs px-3.5 py-1.5 rounded-full shadow">
+            ✨ Powered by Gemini 2.5 Flash AI
+        </div>
+
+        <h1 class="text-4xl md:text-6xl font-extrabold text-white tracking-tight leading-tight">
+            Turn rental contracts into organized records and <span class="text-emerald-400">track key dates</span>.
+        </h1>
+
+        <p class="text-slate-400 text-sm md:text-base max-w-2xl mx-auto leading-relaxed">
+            Built for property managers and landlords moving away from manual spreadsheet tracking. ProprietyGuard extracts key lease details using AI, keeps expiration dates visible, and sends deadline reminders.
+        </p>
+
+        <div class="flex flex-col sm:flex-row justify-center items-center gap-4 pt-4">
+            <a href="{{ url_for('register') }}" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-8 py-3.5 rounded-2xl transition shadow-lg text-sm">
+                Get Started &rarr;
+            </a>
+            <a href="{{ url_for('login') }}" class="w-full sm:w-auto bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-medium px-8 py-3.5 rounded-2xl transition text-sm">
+                I already have an account
+            </a>
+        </div>
+
+        <!-- Features Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-16 text-left">
+            <div class="bg-slate-800/60 border border-slate-700/80 rounded-2xl p-6 space-y-3">
+                <div class="text-2xl">🤖</div>
+                <h3 class="font-bold text-white text-sm">AI Contract Extraction</h3>
+                <p class="text-xs text-slate-400 leading-normal">Upload lease documents to extract tenant details, rent amounts, start/end dates, and clauses for your review.</p>
+            </div>
+            <div class="bg-slate-800/60 border border-slate-700/80 rounded-2xl p-6 space-y-3">
+                <div class="text-2xl">⚠️</div>
+                <h3 class="font-bold text-white text-sm">Expiration Tracking</h3>
+                <p class="text-xs text-slate-400 leading-normal">Keep upcoming lease end dates organized in one dashboard, highlighting agreements approaching expiration.</p>
+            </div>
+            <div class="bg-slate-800/60 border border-slate-700/80 rounded-2xl p-6 space-y-3">
+                <div class="text-2xl">📧</div>
+                <h3 class="font-bold text-white text-sm">Email Reminders</h3>
+                <p class="text-xs text-slate-400 leading-normal">Receive automated email alerts—including an optional alert email address—so renewals don't slip by unnoticed.</p>
+            </div>
+        </div>
+
+        <!-- Product Walkthrough & Screenshots -->
+        <div class="pt-20 space-y-10">
+            <div class="space-y-2">
+                <h2 class="text-2xl font-bold text-white">See ProprietyGuard in Action</h2>
+                <p class="text-xs md:text-sm text-slate-400 max-w-xl mx-auto">
+                    Watch a 45-second walkthrough from uploading a UK tenancy agreement to reviewing extracted terms and triggering 30-day renewal alerts.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
+                <!-- Demo Video -->
+                <div class="bg-slate-800/60 border border-slate-700/80 rounded-2xl p-4 space-y-3">
+                    <div class="rounded-xl overflow-hidden border border-slate-700 bg-slate-950">
+                        <video controls muted playsinline preload="metadata" poster="{{ url_for('static', filename='Images/dashboard.jpg') }}" class="w-full max-h-[460px] object-contain mx-auto">
+                            <source src="{{ url_for('static', filename='demo.mp4') }}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    <p class="text-xs font-medium text-slate-300">1. Full 45-Second Workflow Demo</p>
+                </div>
+
+                <!-- Review Screenshot -->
+                <div class="bg-slate-800/60 border border-slate-700/80 rounded-2xl p-4 space-y-3">
+                    <div class="rounded-xl overflow-hidden border border-slate-700 bg-slate-950">
+                        <img src="{{ url_for('static', filename='Images/review.jpg') }}" alt="Review and edit AI-extracted lease fields" class="w-full max-h-[460px] object-contain mx-auto">
+                    </div>
+                    <p class="text-xs font-medium text-slate-300">2. Review &amp; Verify Extracted Fields</p>
+                </div>
+
+                <!-- Dashboard Screenshot -->
+                <div class="bg-slate-800/60 border border-slate-700/80 rounded-2xl p-4 space-y-3">
+                    <div class="rounded-xl overflow-hidden border border-slate-700 bg-slate-950">
+                        <img src="{{ url_for('static', filename='Images/dashboard.jpg') }}" alt="Active leases dashboard with 30-day expiration warning" class="w-full max-h-[460px] object-contain mx-auto">
+                    </div>
+                    <p class="text-xs font-medium text-slate-300">3. Dashboard &amp; 30-Day Expiration Alerts</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQ Section -->
+        <div class="pt-20 text-left max-w-3xl mx-auto space-y-6">
+            <h2 class="text-2xl font-bold text-white text-center pb-4">Frequently Asked Questions (FAQ)</h2>
+            
+            <div class="bg-slate-800/40 border border-slate-800 rounded-2xl p-5 space-y-2">
+                <h3 class="font-semibold text-white text-sm">How does the AI read contracts?</h3>
+                <p class="text-xs text-slate-400 leading-relaxed">When you upload a supported contract file, the system extracts the text and uses AI to identify key fields like tenant name, rent amount, start and end dates, and adjustment notes, letting you review and confirm before saving.</p>
+            </div>
+
+            <div class="bg-slate-800/40 border border-slate-800 rounded-2xl p-5 space-y-2">
+                <h3 class="font-semibold text-white text-sm">Does it support different languages and currencies?</h3>
+                <p class="text-xs text-slate-400 leading-relaxed">ProprietyGuard is designed to process rental contracts across different languages, currencies, and markets, with customizable alert language options.</p>
+            </div>
+
+            <div class="bg-slate-800/40 border border-slate-800 rounded-2xl p-5 space-y-2">
+                <h3 class="font-semibold text-white text-sm">How are accounts and contract records protected?</h3>
+                <p class="text-xs text-slate-400 leading-relaxed">Each account is protected with password authentication and only displays contracts belonging to that logged-in user. Always review extracted data and avoid uploading sensitive files until you've verified your data-handling needs.</p>
+            </div>
+
+            <div class="bg-slate-800/40 border border-slate-800 rounded-2xl p-5 space-y-2">
+                <h3 class="font-semibold text-white text-sm">How do deadline alerts work?</h3>
+                <p class="text-xs text-slate-400 leading-relaxed">The dashboard tracks lease end dates and flags upcoming expirations, paired with automated email notifications configured for your account.</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-center py-6 text-xs text-slate-500 border-t border-slate-800 mt-20">
+        ProprietyGuard &copy; 2026 — Lease Tracking &amp; Renewal Reminders. All rights reserved.
+    </footer>
+
+    <div class="flex justify-center space-x-6 text-xs text-slate-400 py-6">
+        <a href="{{ url_for('terms') }}" class="hover:text-white transition">Terms of Service</a>
+        <a href="{{ url_for('privacy') }}" class="hover:text-white transition">Privacy Policy</a>
+    </div>
+
+</body>
+</html>

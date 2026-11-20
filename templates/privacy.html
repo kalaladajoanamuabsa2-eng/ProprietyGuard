@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy — ProprietyGuard</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-slate-900 text-slate-200 min-h-screen px-6 py-12">
+    <div class="max-w-3xl mx-auto space-y-6">
+        <a href="{{ url_for('index') }}" class="text-xs text-emerald-400 hover:underline">&larr; Back to ProprietyGuard</a>
+        <h1 class="text-3xl font-bold text-white">Privacy Policy</h1>
+        <p class="text-xs text-slate-400">Last updated: November 2026</p>
+
+        <section class="space-y-2 text-sm text-slate-300 leading-relaxed">
+            <h2 class="text-lg font-semibold text-white">1. Information We Collect</h2>
+            <p>When you create an account on ProprietyGuard, we store your account email address and a cryptographically hashed password. You may optionally provide a separate alert email address for deadline reminders.</p>
+            <p>When you upload a lease document or image and confirm a lease record, we store the extracted lease fields you save (file name, tenant name, contact phone, rent amount, start/end dates, rent adjustment notes, and alert language preference) associated with your account.</p>
+        </section>
+
+        <section class="space-y-2 text-sm text-slate-300 leading-relaxed">
+            <h2 class="text-lg font-semibold text-white">2. How Documents Are Processed &amp; Third-Party Services</h2>
+            <p>ProprietyGuard does not sell your personal data. To deliver core functionality, specific information is processed by third-party service providers:</p>
+            <ul class="list-disc pl-5 space-y-1 text-slate-300">
+                <li><strong>AI Processing (Google Gemini API):</strong> Extracted contract text or uploaded image content is sent to the Google Gemini API to parse lease details and generate reminder email text.</li>
+                <li><strong>Hosting &amp; Database Infrastructure:</strong> Application code and account/lease records are hosted on cloud infrastructure (Render and its managed database).</li>
+                <li><strong>Email Delivery (Resend):</strong> Alert emails and password-reset messages are sent through the Resend email API to your account or configured alert email address.</li>
+            </ul>
+            <p>Because external providers process data to operate the service, we do not promise absolute confidentiality. Please avoid uploading highly sensitive personal documents or confidential client files unless you are comfortable with how the service operates.</p>
+        </section>
+
+        <section class="space-y-2 text-sm text-slate-300 leading-relaxed">
+            <h2 class="text-lg font-semibold text-white">3. Data Retention &amp; Deletion</h2>
+            <p>Saved lease records remain in your account until you delete them from your dashboard or request account removal. Deleting a contract removes that record from your active account view and database.</p>
+        </section>
+
+        <section class="space-y-2 text-sm text-slate-300 leading-relaxed">
+            <h2 class="text-lg font-semibold text-white">4. Security &amp; Access Controls</h2>
+            <p>Passwords are stored using cryptographic hashing, sessions are managed via cookies, and contract queries are scoped to the authenticated user account. No online system can guarantee 100% security against all threats.</p>
+        </section>
+    </div>
+</body>
+</html>

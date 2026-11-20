@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-xl mx-auto bg-slate-800 border border-slate-700 rounded-xl p-6 shadow-xl space-y-6">
+    <div>
+        <h1 class="text-xl font-bold text-white">Human Lease Review</h1>
+        <p class="text-xs text-slate-400 mt-1">Confirm the details and language detected by AI before saving.</p>
+    </div>
+
+    <form method="POST" class="space-y-4">
+        <div>
+            <label class="block text-xs text-slate-400 mb-1">Tenant Name</label>
+            <input type="text" name="tenant_name" value="{{ dados.get('tenant_name', '') }}" required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white focus:border-emerald-500 outline-none">
+        </div>
+        <div>
+            <label class="block text-xs text-slate-400 mb-1">Contact Phone</label>
+            <input type="text" name="tenant_phone" value="{{ dados.get('tenant_phone', '') }}" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white focus:border-emerald-500 outline-none">
+        </div>
+        <div>
+            <label class="block text-xs text-slate-400 mb-1">Rent Amount</label>
+            <input type="text" name="rent_amount" value="{{ dados.get('rent_amount', '') }}" required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white focus:border-emerald-500 outline-none">
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label class="block text-xs text-slate-400 mb-1">Start Date</label>
+                <input type="text" name="start_date" value="{{ dados.get('start_date', '') }}" required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white focus:border-emerald-500 outline-none">
+            </div>
+            <div>
+                <label class="block text-xs text-slate-400 mb-1">End Date</label>
+                <input type="text" name="end_date" value="{{ dados.get('end_date', '') }}" required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white focus:border-emerald-500 outline-none">
+            </div>
+        </div>
+        <div>
+            <label class="block text-xs text-slate-400 mb-1">Rent Adjustment Index / Rule</label>
+            <input type="text" name="adjustment_index" value="{{ dados.get('adjustment_index', '') }}" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white focus:border-emerald-500 outline-none">
+        </div>
+        <div>
+            <label class="block text-xs text-slate-400 mb-1">Alert Language (Select or type)</label>
+            <input type="text" name="alert_language" list="idiomas_globais" value="{{ dados.get('detected_language', 'English') }}" placeholder="e.g. Swahili, Hindi, Japanese, Arabic..." class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white focus:border-emerald-500 outline-none">
+            
+            <datalist id="idiomas_globais">
+                <option value="English">English</option>
+                <option value="Portuguese">Português</option>
+                <option value="Spanish">Español</option>
+                <option value="French">Français</option>
+                <option value="German">Deutsch</option>
+                <option value="Italian">Italiano</option>
+                <option value="Russian">Русский</option>
+                <option value="Mandarin">中文</option>
+                <option value="Japanese">日本語</option>
+                <option value="Korean">한국어</option>
+                <option value="Hindi">हिन्दी</option>
+                <option value="Vietnamese">Tiếng Việt</option>
+                <option value="Indonesian">Bahasa Indonesia</option>
+                <option value="Arabic">العربية</option>
+                <option value="Persian">فارسی</option>
+                <option value="Turkish">Türkçe</option>
+                <option value="Swahili">Kiswahili</option>
+                <option value="Amharic">አማርኛ</option>
+            </datalist>
+            <p class="text-[10px] text-slate-500 mt-1">Click the arrow to pick from the list or type any language freely.</p>
+        </div>
+
+        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-3 rounded-lg transition text-sm shadow-md">
+            Confirm and Save Lease ✅
+        </button>
+    </form>
+</div>
+
+<div class="flex justify-center space-x-6 text-xs text-slate-400 mt-8">
+    <a href="{{ url_for('terms') }}" class="hover:text-white transition">Terms of Service</a>
+    <a href="{{ url_for('privacy') }}" class="hover:text-white transition">Privacy Policy</a>
+</div>
+
+{% endblock %}
