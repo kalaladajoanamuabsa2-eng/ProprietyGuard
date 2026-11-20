@@ -167,13 +167,18 @@ def analisar_contrato_com_gemini(conteudo_documento, filename):
 def gerar_corpo_email_multilingue(tenant_name, end_date, dias_restantes, idioma_desejado):
     url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={GEMINI_API_KEY}"
     prompt = f"""
-    Write a short, professional rental expiration alert email body.
+    Write a short, professional automated reminder email from ProprietyGuard to a landlord or property manager.
+    - Purpose: Alert the landlord/property manager that a tenant's lease is approaching expiration.
     - Tenant Name: {tenant_name}
     - Expiration Date: {end_date}
-    - Days remaining: {dias_restantes}
+    - Days Remaining: {dias_restantes}
     - Language to write the email in: {idioma_desejado}
 
-    Return ONLY the plain text body of the email, no extra conversational filler.
+    Rules:
+    - Address the recipient as the landlord or property manager (e.g., "Hello," or "Lease Renewal Reminder:"), NOT the tenant.
+    - Sign off simply as "ProprietyGuard Automated Alerts".
+    - Do NOT include any square brackets or placeholders like [Property Address] or [Your Name].
+    - Return ONLY the plain text body of the email, with no subject line or conversational filler.
     """
     payload = {"contents": [{"parts": [{"text": prompt}]}]}
     headers = {"Content-Type": "application/json"}
@@ -185,7 +190,13 @@ def gerar_corpo_email_multilingue(tenant_name, end_date, dias_restantes, idioma_
             return data['candidates'][0]['content']['parts'][0]['text'].strip()
     except Exception:
         pass
-    return f"Hello! The lease agreement for tenant {tenant_name} expires on {end_date} ({dias_restantes} days remaining)."
+    return (
+        f"Hello,\n\n"
+        f"This is an automated reminder that the lease agreement for tenant {tenant_name} "
+        f"expires on {end_date} ({dias_restantes} days remaining).\n\n"
+        f"Please log in to your ProprietyGuard dashboard to review the lease details or plan your renewal outreach.\n\n"
+        f"ProprietyGuard Automated Alerts"
+    )
 
 def enviar_email_generico(destinatario, assunto, corpo):
     url = "https://api.resend.com/emails"
