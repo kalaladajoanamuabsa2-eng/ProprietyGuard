@@ -350,7 +350,8 @@ def index():
     
     meus_contratos = Contract.query.filter_by(user_id=session['user_id']).all()
     hoje = date.today()
-    alerta_limite = hoje + timedelta(days=30)
+    alerta_dias = 90
+    alerta_limite = hoje + timedelta(days=alerta_dias)
     contratos_alerta = 0
     for c in meus_contratos:
         if not c.end_date:
@@ -361,7 +362,13 @@ def index():
                 contratos_alerta += 1
         except ValueError:
             continue
-    return render_template('dashboard.html', contratos=meus_contratos, alertas_count=contratos_alerta, hoje=hoje)
+    return render_template(
+        'dashboard.html',
+        contratos=meus_contratos,
+        alertas_count=contratos_alerta,
+        alerta_dias=alerta_dias,
+        hoje=hoje
+    )
 
 @app.route('/novo', methods=['GET', 'POST'])
 def novo_contrato():
