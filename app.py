@@ -52,7 +52,7 @@ class Contract(db.Model):
     end_date = db.Column(db.String(50), nullable=False)
     adjustment_index = db.Column(db.String(100), nullable=True)
     alert_language = db.Column(db.String(50), default="")
-    alertas_enviados = db.Column(db.String(50), default="")
+    alertas_enviados = db.Column(db.String(200), default="")
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
 with app.app_context():
@@ -351,7 +351,16 @@ def index():
     meus_contratos = Contract.query.filter_by(user_id=session['user_id']).all()
     hoje = date.today()
     alerta_limite = hoje + timedelta(days=30)
-    contratos_alerta = sum(1 for c in meus_contratos if hoje <= datetime.strptime(c.end_date, "%Y-%m-%d").date() <= alerta_limite)
+    contratos_alerta = 0
+    for c in meus_contratos:
+        if not c.end_date:
+            continue
+        try:
+            data_fim = datetime.strptime(str(c.end_date).strip(), "%Y-%m-%d").date()
+            if hoje <= data_fim <= alerta_limite:
+                contratos_alerta += 1
+        except ValueError:
+            continue
     return render_template('dashboard.html', contratos=meus_contratos, alertas_count=contratos_alerta, hoje=hoje)
 
 @app.route('/novo', methods=['GET', 'POST'])
@@ -485,7 +494,11 @@ def verificar_prazos_automatico():
             dias_restantes = (data_fim - hoje).days
             
             marco_atual = None
-            if 28 <= dias_restantes <= 30:
+            if 88 <= dias_restantes <= 90:
+                marco_atual = "90"
+            elif 58 <= dias_restantes <= 60:
+                marco_atual = "60"
+            elif 28 <= dias_restantes <= 30:
                 marco_atual = "30"
             elif 13 <= dias_restantes <= 15:
                 marco_atual = "15"
